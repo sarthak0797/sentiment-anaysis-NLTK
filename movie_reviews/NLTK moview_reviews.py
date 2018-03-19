@@ -1,8 +1,7 @@
-import nltk
-import random
+import nltk.classify.util
+from nltk.classify import NaiveBayesClassifier
 from nltk.corpus import movie_reviews
-
-random.seed()
+import pickle
 
 document = [(list(movie_reviews.words(fileid)), category)
              for category in movie_reviews.categories()
@@ -16,7 +15,7 @@ for w in movie_reviews.words():
 
 all_words = nltk.FreqDist(all_words)
 
-word_features = list(all_words.keys())
+word_features = list(all_words.keys())[:5000]
 
 def find(documents):
     temp = {}
@@ -32,7 +31,18 @@ features = [(find(w) , ids) for (w , ids) in document]
 training_set = features[:900] + features[1000:1900]
 testing_set = features[900:1000] + features[1900:]
 
-classifier = nltk.NaiveBayesClassifier.train(training_set)
+#Run next 4 instructions if you're running the script for first time 
+classifier = NaiveBayesClassifier.train(training_set)
+classify_buffer = open('movie_reviews.pickle', 'wb')
+pickle.dump(classifier, classify_buffer)
+classify_buffer.close()
+#Comment above 4 instructions if you've run the script once
+
+#Run next 3 instructions if you're running the script second time onwards
+#classify_buffer = open('movie_reviews.pickle', 'rb')
+#classifier = pickle.load(classify_buffer)
+#classify_buffer.close()
+#Comment aboce 3 instructions while running the script for first time
 
 print("Classifier accuracy percent:",(nltk.classify.accuracy(classifier, testing_set))*100)
 
