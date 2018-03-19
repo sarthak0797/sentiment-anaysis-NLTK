@@ -1,20 +1,15 @@
-import nltk
-import random
+import nltk.classify.util
+from nltk.classify import NaiveBayesClassifier
+import pickle
 from nltk.corpus import movie_reviews
-from nltk.corpus import stopwords
 import itertools
 from nltk.collocations import BigramCollocationFinder
 from nltk.metrics import BigramAssocMeasures
- 
 
-random.seed()
 
 document = [(list(movie_reviews.words(fileid)), category)
              for category in movie_reviews.categories()
              for fileid in movie_reviews.fileids(category)]
-
-
-random.shuffle(document)
 
 all_words = []
 
@@ -46,6 +41,17 @@ features = [(find(w) , ids) for (w , ids) in document]
 training_set = features[:900] + features[1000:1900]
 testing_set = features[900:1000] + features[1900:]
 
-classifier = nltk.NaiveBayesClassifier.train(training_set)
+#Run next 4 instructions if you're running the script for first time 
+classifier = NaiveBayesClassifier.train(training_set)
+classify_buffer = open('movie_reviews.pickle', 'wb')
+pickle.dump(classifier, classify_buffer)
+classify_buffer.close()
+#Comment above 4 instructions if you've run the script once
 
-print("Classifier accuracy percent after using bigrams is:",(nltk.classify.accuracy(classifier, testing_set))*100)
+#Run next 3 instructions if you're running the script second time onwards
+#classify_buffer = open('movie_reviews.pickle', 'rb')
+#classifier = pickle.load(classify_buffer)
+#classify_buffer.close()
+#Comment aboce 3 instructions while running the script for first time
+
+print("Classifier accuracy after using bigrams is percent:",(nltk.classify.accuracy(classifier, testing_set))*100)
