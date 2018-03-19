@@ -49,5 +49,3 @@ testing_set = features[900:1000] + features[1900:]
 classifier = nltk.NaiveBayesClassifier.train(training_set)
 
 print("Classifier accuracy percent after using bigrams is:",(nltk.classify.accuracy(classifier, testing_set))*100)
-
-classifier.show_most_informative_features()
